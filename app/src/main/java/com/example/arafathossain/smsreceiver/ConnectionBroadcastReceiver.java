@@ -8,7 +8,7 @@ import android.net.ConnectivityManager;
 import android.util.Log;
 
 
-public class ConnectionBroadcastReceiver extends BroadcastReceiver implements SMSUpload.Pppp{
+public class ConnectionBroadcastReceiver extends BroadcastReceiver implements SMSUpload.OnResponseOkListener {
     DatabaseHelper helper;
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,7 +40,7 @@ public class ConnectionBroadcastReceiver extends BroadcastReceiver implements SM
     }
 
     @Override
-    public void qqqq(String id) {
+    public void OnResponseOk(String id) {
         helper.deleteSMS(id);
         Log.d("delete","true");
     }

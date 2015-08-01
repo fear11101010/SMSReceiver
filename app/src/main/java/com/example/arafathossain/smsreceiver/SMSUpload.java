@@ -1,7 +1,6 @@
 package com.example.arafathossain.smsreceiver;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -19,11 +18,11 @@ import java.util.Map;
 public class SMSUpload {
     private static final String SERVER_URL = "http://darksider.byethost13.com/sms/insert_sms_detail.php";
     private RequestQueue queue;
-    private Pppp pppp;
+    private OnResponseOkListener onResponseOkListener;
 
-    public SMSUpload(Context context,Pppp pppp) {
+    public SMSUpload(Context context,OnResponseOkListener onResponseOkListener) {
         queue = Volley.newRequestQueue(context);
-        this.pppp = pppp;
+        this.onResponseOkListener = onResponseOkListener;
     }
 
     public void makeRequest(final SMS sms) {
@@ -31,7 +30,7 @@ public class SMSUpload {
             @Override
             public void onResponse(String s) {
                 Log.d("response", s);
-                if (s.equalsIgnoreCase("upload complete"))if (pppp!=null) pppp.qqqq(sms.getId());
+                if (s.equalsIgnoreCase("upload complete"))if (onResponseOkListener !=null) onResponseOkListener.OnResponseOk(sms.getId());
             }
         }, new Response.ErrorListener() {
             @Override
@@ -49,10 +48,10 @@ public class SMSUpload {
             }
         };
         queue.add(request);
-        Log.d("pppp", "asda");
+        Log.d("onResponseOkListener", "asda");
     }
-    interface Pppp{
-        void qqqq(String id);
+    interface OnResponseOkListener {
+        void OnResponseOk(String id);
     }
 
 }
