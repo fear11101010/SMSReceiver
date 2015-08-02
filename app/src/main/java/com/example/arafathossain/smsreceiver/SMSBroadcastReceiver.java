@@ -7,14 +7,17 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class SMSBroadcastReceiver extends BroadcastReceiver {
+public class SMSBroadcastReceiver extends BroadcastReceiver implements SMSUpload.OnResponseListener {
+    DatabaseHelper helper;
     @Override
     public void onReceive(Context context, Intent intent) {
+        helper = new DatabaseHelper(context);
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
         SmsMessage[] sms = new SmsMessage[pdus.length];
@@ -31,7 +34,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
                 values.put(DatabaseHelper.COLUMN_FROM, from);
                 values.put(DatabaseHelper.COLUMN_BODY, body);
                 values.put(DatabaseHelper.COLUMN_TIME, time);
-                new DatabaseHelper(context).insertSMS(values);
+                helper.insertSMS(values);
             }
         }
     }
@@ -41,4 +44,18 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
         return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected() || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
+    @Override
+    public void OnResponseOk(String id) {
+
+    }
+
+    @Override
+    public void OnResponseFailed(SMS sms) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_FROM, sms.getFrom());
+        values.put(DatabaseHelper.COLUMN_BODY, sms.getBody());
+        values.put(DatabaseHelper.COLUMN_TIME, sms.getTime());
+        helper.insertSMS(values);
+        Log.d("statuss","insert into sqlite");
+    }
 }

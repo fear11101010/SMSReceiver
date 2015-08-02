@@ -8,7 +8,7 @@ import android.net.ConnectivityManager;
 import android.util.Log;
 
 
-public class ConnectionBroadcastReceiver extends BroadcastReceiver implements SMSUpload.OnResponseOkListener {
+public class ConnectionBroadcastReceiver extends BroadcastReceiver implements SMSUpload.OnResponseListener {
     DatabaseHelper helper;
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -43,5 +43,10 @@ public class ConnectionBroadcastReceiver extends BroadcastReceiver implements SM
     public void OnResponseOk(String id) {
         helper.deleteSMS(id);
         Log.d("delete","true");
+    }
+
+    @Override
+    public void OnResponseFailed(SMS sms) {
+
     }
 }

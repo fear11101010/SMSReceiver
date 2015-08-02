@@ -6,8 +6,6 @@ import android.util.Log;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -18,25 +16,21 @@ import java.util.Map;
 public class SMSUpload {
     private static final String SERVER_URL = "http://darksider.byethost13.com/sms/insert_sms_detail.php";
     private RequestQueue queue;
-    private OnResponseOkListener onResponseOkListener;
+    private OnResponseListener onResponseListener;
 
-    public SMSUpload(Context context,OnResponseOkListener onResponseOkListener) {
+    public SMSUpload(Context context, OnResponseListener onResponseListener) {
         queue = Volley.newRequestQueue(context);
-        this.onResponseOkListener = onResponseOkListener;
+        this.onResponseListener = onResponseListener;
     }
 
     public void makeRequest(final SMS sms) {
-        StringRequest request = new StringRequest(Request.Method.POST, SERVER_URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                Log.d("response", s);
-                if (s.equalsIgnoreCase("upload complete"))if (onResponseOkListener !=null) onResponseOkListener.OnResponseOk(sms.getId());
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                volleyError.printStackTrace();
-            }
+        StringRequest request = new StringRequest(Request.Method.POST, SERVER_URL, s -> {
+            Log.d("response", s);
+            if (s.equalsIgnoreCase("upload complete")) if (onResponseListener != null)
+                onResponseListener.OnResponseOk(sms.getId());
+        }, volleyError -> {
+            onResponseListener.OnResponseFailed(sms);
+            volleyError.printStackTrace();
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -48,10 +42,13 @@ public class SMSUpload {
             }
         };
         queue.add(request);
-        Log.d("onResponseOkListener", "asda");
+        Log.d("onResponseListener", "asda");
     }
-    interface OnResponseOkListener {
+
+    interface OnResponseListener {
         void OnResponseOk(String id);
+
+        void OnResponseFailed(SMS sms);
     }
 
 }
