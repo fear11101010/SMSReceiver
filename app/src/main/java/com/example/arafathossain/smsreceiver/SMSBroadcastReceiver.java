@@ -27,7 +27,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver implements SMSUpload
             String body = sms[i].getDisplayMessageBody();
             String time = new SimpleDateFormat("dd/MM/yyyy  hh:mm a").format(new Date(sms[i].getTimestampMillis()));
             if (isNetworkAvailable(context)) {
-                SMSUpload upload = new SMSUpload(context,null);
+                SMSUpload upload = new SMSUpload(context,this);
                 upload.makeRequest(new SMS(from, body, time));
             } else {
                 ContentValues values = new ContentValues();
