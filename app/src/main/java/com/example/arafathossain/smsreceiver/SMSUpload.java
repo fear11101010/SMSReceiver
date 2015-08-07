@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 public class SMSUpload {
-    private static final String SERVER_URL = "http://darksider.byethost13.com/sms/insert_sms_detail.php";
+    private static final String SERVER_URL = "http://api.livestockbd.info//StoreMassage/createAnEntry";
     private RequestQueue queue;
     private OnResponseListener onResponseListener;
 
@@ -30,7 +30,7 @@ public class SMSUpload {
             @Override
             public void onResponse(String s) {
                 Log.d("response", s);
-                if (s.equalsIgnoreCase("upload complete")) if (onResponseListener != null)
+                if (s.equalsIgnoreCase("\"Stored Successfully\"")) if (onResponseListener != null)
                     onResponseListener.OnResponseOk(sms.getId());
             }
         }, new Response.ErrorListener() {
@@ -43,9 +43,9 @@ public class SMSUpload {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("from", sms.getFrom());
-                params.put("body", sms.getBody());
-                params.put("time", sms.getTime());
+                params.put("number", sms.getFrom());
+                params.put("sms", sms.getBody());
+                params.put("received", sms.getTime());
                 return params;
             }
         };
